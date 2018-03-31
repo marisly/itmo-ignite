@@ -21,9 +21,7 @@ public class ClientExample {
         CacheConfiguration<Integer, Person> ccfg = new CacheConfiguration<>("Person");
 
         ccfg.setIndexedTypes(Integer.class, Person.class);
-
         IgniteConfiguration cfg = new IgniteConfiguration();
-
         cfg.setClientMode(true);
 
         cfg.setCacheConfiguration(ccfg);
@@ -33,9 +31,7 @@ public class ClientExample {
         node1.getOrCreateCache(ccfg);
 
         try {
-            node1.cache("Person").query(new SqlFieldsQuery("CREATE TABLE if not exists \"PUBLIC\".Car(id int, person_id int, " +
-                "license varchar, primary key(id, person_id)) WITH \"affinitykey=PERSON_ID,cache_name=Car," +
-                "key_type=CarKey,value_type=Car\""));
+            node1.cache("Person").query(new SqlFieldsQuery("CREATE TABLE if not exists \"PUBLIC\".Car(id int, person_id int, license varchar, primary key(id, person_id)) WITH \"affinitykey=PERSON_ID,cache_name=Car,key_type=CarKey,value_type=Car\""));
 
             Person p = new Person("A", "P", 200);
 
