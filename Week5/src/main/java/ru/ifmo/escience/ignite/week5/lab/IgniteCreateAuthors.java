@@ -39,20 +39,24 @@ public class IgniteCreateAuthors {
 
         try {
 
-            node1.cache("Author").put(1, new Author("Fedor", "Dostoevsky", 1830));
+            node1.cache("Author").put(1, new Author("Joah K", "Rowling", 1950));
             node1.cache("Author").put(2, new Author("Jack", "London", 1880));
+            node1.cache("Author").put(3, new Author("Mark", "Twain", 1830));
+            node1.cache("Author").put(4, new Author("Charles", "Dickens", 1880));
+            node1.cache("Author").put(5, new Author("Oscar", "Wilde", 1870));
 
             System.out.println(node1.cache("Author").query(new SqlFieldsQuery("SELECT * FROM Author")).getAll());
 
 
            node1.cache("Author").query(new SqlFieldsQuery("DROP TABLE IF EXISTS \"PUBLIC\".Book"));
 
-            node1.cache("Author").query(new SqlFieldsQuery("CREATE TABLE if not exists \"PUBLIC\".Book(id int, author_id int, title varchar, year int, genre_id int, primary key(id, author_id)) WITH \"affinitykey=ID, AUTHOR_ID,cache_name=Book,key_type=BookKey,value_type=Book\""));
+            node1.cache("Author").query(new SqlFieldsQuery("CREATE TABLE if not exists \"PUBLIC\".Book(id int, author_id int, title varchar, year int, genre_id int, primary key(id, author_id)) WITH \"affinitykey=AUTHOR_ID,cache_name=Book,key_type=BookKey,value_type=Book\""));
 
             node1.cache("Author").query(new SqlFieldsQuery("CREATE TABLE if not exists \"PUBLIC\".Genre(id int, name int, primary key(id)) WITH \"cache_name=Genre,key_type=GenreKey,value_type=Genre, backups=1\""));
 
 
-           node1.cache("Book").query(new SqlFieldsQuery("INSERT INTO Book(id, author_id, title, year, genre_id) VALUES (1, 2, 'Potter', 2000, '1')"));
+           node1.cache("Book").query(new SqlFieldsQuery("INSERT INTO Book(id, author_id, title, year, genre_id) VALUES (1, 1, 'Potter', 2000, '1')"));
+            node1.cache("Book").query(new SqlFieldsQuery("INSERT INTO Book(id, author_id, title, year, genre_id) VALUES (2, 2, 'Martin', 1910, '1')"));
 
             //BinaryObjectBuilder bldr1 = node1.binary().builder("Author");
 
@@ -61,7 +65,9 @@ public class IgniteCreateAuthors {
             System.out.println(node1.cache("Genre").query(new SqlFieldsQuery("SELECT * FROM \"PUBLIC\".Genre")).getAll());
 
             BinaryObject ck = node1.binary().builder("BookKey").setField("ID", 1).setField("AUTHOR_ID", 100000).build();
-            print(Utils.sameAffinity(node1, "Book", 1, "Author", ck));
+
+
+            print(Utils.sameAffinity(node1, "Book", 1, "Author", 1));
 
             readln();
 
